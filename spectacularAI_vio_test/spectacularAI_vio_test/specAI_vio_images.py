@@ -76,9 +76,9 @@ class VIO(Node):
             self.publish_vio(vel, angul_vel, pose, orientation)
 
         # Publish compressed images
-        # if self.leftQueue.has():
-        #     left_frame = self.leftQueue.get()
-        #     self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
+        if self.leftQueue.has():
+            left_frame = self.leftQueue.get()
+            self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
 
         # if self.rightQueue.has():
         #     right_frame = self.rightQueue.get()
