@@ -36,8 +36,8 @@ class VIO(Node):
         self.vio_pub = self.create_publisher(Odometry, 'vio', 10)
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
         # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
-        left_xout = self.vio_pipeline.xoutLeft
-        right_xout = self.vio_pipeline.xoutRight
+        left_xout = self.vio_pipeline.monoLeft
+        right_xout = self.vio_pipeline.monoRight
         self.leftEncoder = self.pipeline.createVideoEncoder()
         self.leftEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
         left_xout.link(self.leftEncoder.input)
