@@ -39,6 +39,7 @@ class VIO(Node):
         left_can = self.vio_pipeline.monoLeft
         print(left_can.getResolution())
         print(left_can.getFps())
+        print(left_can.out)
         # print(left_can)
         left_xout = self.pipeline.createXLinkOut()
         # xout1 = pipeline.create(dai.node.XLinkOut)
