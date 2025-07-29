@@ -44,6 +44,7 @@ class VIO(Node):
         left_xout = self.pipeline.createXLinkOut()
         # xout1 = pipeline.create(dai.node.XLinkOut)
         left_xout.setStreamName("xoutleft")
+        left_can.out.link(left_xout.input)
         print(left_xout)
         # right_xout = self.vio_pipeline.monoRight.out
         # self.leftEncoder = self.pipeline.createVideoEncoder()
