@@ -5,7 +5,6 @@ from nav_msgs.msg import Odometry
 import depthai
 import spectacularAI
 import numpy as np
-import cv2
 
 class VIO(Node):
     def __init__(self):
@@ -83,10 +82,10 @@ class VIO(Node):
         if self.leftQueue.has():
             # left_frame = self.leftQueue.get()
             left_frame = self.leftQueue.tryGet()
-            print(left_frame)
-            if left_frame is not None:
-                cv2.imshow('left', left_frame.getCvFrame())
-            # self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
+            # print(left_frame)
+            # if left_frame is not None:
+            #     cv2.imshow('left', left_frame.getCvFrame())
+            self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
 
         # if self.rightQueue.has():
         #     right_frame = self.rightQueue.get()
