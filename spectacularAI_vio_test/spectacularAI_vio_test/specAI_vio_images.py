@@ -37,15 +37,11 @@ class VIO(Node):
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
         # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
         left_can = self.vio_pipeline.monoLeft
-        print(left_can.getResolution())
-        print(left_can.getFps())
-        print(left_can.out)
         # print(left_can)
         left_xout = self.pipeline.createXLinkOut()
         # xout1 = pipeline.create(dai.node.XLinkOut)
         left_xout.setStreamName("xoutleft")
         left_can.out.link(left_xout.input)
-        print(left_xout)
         # right_xout = self.vio_pipeline.monoRight.out
         # self.leftEncoder = self.pipeline.createVideoEncoder()
         # self.leftEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
@@ -84,7 +80,8 @@ class VIO(Node):
         # Publish compressed images
         if self.leftQueue.has():
             left_frame = self.leftQueue.get()
-            self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
+            print(left_frame)
+            # self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
 
         # if self.rightQueue.has():
         #     right_frame = self.rightQueue.get()
