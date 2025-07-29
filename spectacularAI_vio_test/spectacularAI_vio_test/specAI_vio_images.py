@@ -66,7 +66,7 @@ class VIO(Node):
 
         # Start timer
         self.timer = self.create_timer(0.01, self.processOutput)  # e.g., 100 Hz
-        K
+
 
     def processOutput(self):
         # Publish VIO
