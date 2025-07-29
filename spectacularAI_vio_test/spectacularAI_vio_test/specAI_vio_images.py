@@ -37,6 +37,9 @@ class VIO(Node):
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
         # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
         left_xout = self.vio_pipeline.monoLeft.out
+        # xout1 = pipeline.create(dai.node.XLinkOut)
+
+        left_xout.setStreamName("xout1")
         print(left_xout)
         right_xout = self.vio_pipeline.monoRight.out
         self.leftEncoder = self.pipeline.createVideoEncoder()
