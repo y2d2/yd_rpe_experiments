@@ -11,7 +11,6 @@ class VIO(Node):
         super().__init__('spectacularAI_vio_node')
 
         # Create pipeline and VIO session
-        self.pipeline = depthai.Pipeline()
         #
         # # Setup mono cameras
         # self.left = self.pipeline.createMonoCamera()
@@ -32,14 +31,29 @@ class VIO(Node):
         # # self.right.out.link(self.rightEncoder.input)
 
         # Setup VIO
+        self.pipeline = depthai.Pipeline()
+
         self.vio_pipeline = spectacularAI.depthai.Pipeline(self.pipeline)
+
+
         self.vio_pub = self.create_publisher(Odometry, 'vio', 10)
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
         # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
         left_can = self.vio_pipeline.monoLeft
         # print(left_can)
+
+        leftEncoder = self.pipeline.createVideoEncoder()
+        leftEncoder.setDefaultProfilePreset(
+            30, depthai.VideoEncoderProperties.Profile.MJPEG
+        )
+        left_can.out.link(leftEncoder.input)
+
+
         left_xout = self.pipeline.createXLinkOut()
+
         # xout1 = pipeline.create(dai.node.XLinkOut)
+        #
+
         left_xout.setStreamName("xoutleft")
         left_can.out.link(left_xout.input)
         # right_xout = self.vio_pipeline.monoRight.out
@@ -85,7 +99,8 @@ class VIO(Node):
             # print(left_frame)
             # if left_frame is not None:
             #     cv2.imshow('left', left_frame.getCvFrame())
-            self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
+            if left_frame is not None:
+                self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
 
         # if self.rightQueue.has():
         #     right_frame = self.rightQueue.get()
