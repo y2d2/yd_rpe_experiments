@@ -36,7 +36,7 @@ class VIO(Node):
         self.vio_pub = self.create_publisher(Odometry, 'vio', 10)
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
         # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
-        left_xout = self.vio_pipeline.monoLeft.out
+        left_xout = self.vio_pipeline.createXLinkOut()
         # xout1 = pipeline.create(dai.node.XLinkOut)
 
         left_xout.setStreamName("xout1")
