@@ -80,7 +80,8 @@ class VIO(Node):
 
         # Publish compressed images
         if self.leftQueue.has():
-            left_frame = self.leftQueue.get()
+            # left_frame = self.leftQueue.get()
+            left_frame = self.leftQueue.tryGet()
             print(left_frame)
             # self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
 
