@@ -12,37 +12,38 @@ class VIO(Node):
 
         # Create pipeline and VIO session
         self.pipeline = depthai.Pipeline()
-
-        # Setup mono cameras
-        self.left = self.pipeline.createMonoCamera()
-        # self.right = self.pipeline.createMonoCamera()
-        self.left.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_400_P)
-        # self.right.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_400_P)
-        self.left.setBoardSocket(depthai.CameraBoardSocket.LEFT)
-        # self.right.setBoardSocket(depthai.CameraBoardSocket.RIGHT)
-
-        # Setup video encoders
-        self.leftEncoder = self.pipeline.createVideoEncoder()
-        # self.rightEncoder = self.pipeline.createVideoEncoder()
-        self.leftEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
-        # self.rightEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
-
-        # Link cameras to encoders
-        self.left.out.link(self.leftEncoder.input)
-        # self.right.out.link(self.rightEncoder.input)
+        #
+        # # Setup mono cameras
+        # self.left = self.pipeline.createMonoCamera()
+        # # self.right = self.pipeline.createMonoCamera()
+        # self.left.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_400_P)
+        # # self.right.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_400_P)
+        # self.left.setBoardSocket(depthai.CameraBoardSocket.LEFT)
+        # # self.right.setBoardSocket(depthai.CameraBoardSocket.RIGHT)
+        #
+        # # Setup video encoders
+        # self.leftEncoder = self.pipeline.createVideoEncoder()
+        # # self.rightEncoder = self.pipeline.createVideoEncoder()
+        # self.leftEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
+        # # self.rightEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
+        #
+        # # Link cameras to encoders
+        # self.left.out.link(self.leftEncoder.input)
+        # # self.right.out.link(self.rightEncoder.input)
 
         # Setup VIO
         self.vio_pipeline = spectacularAI.depthai.Pipeline(self.pipeline)
         self.vio_pub = self.create_publisher(Odometry, 'vio', 10)
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
         # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
-
+        left_xout = self.vio_pipeline.getLeftCameraOutput()
+        right_xout = self.vio_pipeline.getRightCameraOutput()
         # Create device and start VIO session
         self.device = depthai.Device(self.pipeline)
         self.vio_session = self.vio_pipeline.startSession(self.device)
 
         # Get encoder output queues
-        self.leftQueue = self.device.getOutputQueue(name=self.leftEncoder.getOutputQueueName(), maxSize=4, blocking=False)
+        # self.leftQueue = self.device.getOutputQueue(name=self.leftEncoder.getOutputQueueName(), maxSize=4, blocking=False)
         # self.rightQueue = self.device.getOutputQueue(name=self.rightEncoder.getOutputQueueName(), maxSize=4, blocking=False)
 
         # Start timer
@@ -59,9 +60,9 @@ class VIO(Node):
             self.publish_vio(vel, angul_vel, pose, orientation)
 
         # Publish compressed images
-        if self.leftQueue.has():
-            left_frame = self.leftQueue.get()
-            self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
+        # if self.leftQueue.has():
+        #     left_frame = self.leftQueue.get()
+        #     self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
 
         # if self.rightQueue.has():
         #     right_frame = self.rightQueue.get()
