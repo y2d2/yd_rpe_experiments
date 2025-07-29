@@ -38,13 +38,27 @@ class VIO(Node):
         # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
         left_xout = self.vio_pipeline.xoutLeft
         right_xout = self.vio_pipeline.xoutRight
+        self.leftEncoder = self.pipeline.createVideoEncoder()
+        self.leftEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
+        left_xout.link(self.leftEncoder.input)
+
+        self.rightEncoder = self.pipeline.createVideoEncoder()
+        self.rightEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
+        right_xout.link(self.rightEncoder.input)
+
+
         # Create device and start VIO session
         self.device = depthai.Device(self.pipeline)
         self.vio_session = self.vio_pipeline.startSession(self.device)
 
+        # self.left_q = self.device.getOutputQueue(name=self.left_enc.getOutputQueueName(),
+        #                                          maxSize=4, blocking=False)
+        # self.right_q = self.device.getOutputQueue(name=self.right_enc.getOutputQueueName(),
+        #                                           maxSize=4, blocking=False)
+
         # Get encoder output queues
-        # self.leftQueue = self.device.getOutputQueue(name=self.leftEncoder.getOutputQueueName(), maxSize=4, blocking=False)
-        # self.rightQueue = self.device.getOutputQueue(name=self.rightEncoder.getOutputQueueName(), maxSize=4, blocking=False)
+        self.leftQueue = self.device.getOutputQueue(name=self.leftEncoder.getOutputQueueName(), maxSize=4, blocking=False)
+        self.rightQueue = self.device.getOutputQueue(name=self.rightEncoder.getOutputQueueName(), maxSize=4, blocking=False)
 
         # Start timer
         self.timer = self.create_timer(0.01, self.processOutput)  # e.g., 100 Hz
