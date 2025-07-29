@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'spectacularAI_test_node = spectacularAI_vio_test.spectacularAI_vio_test:main',
+            "specAI_vio_images = spectacularAI_vio_test.specAI_vio_images:main",
         ],
     },
 )
