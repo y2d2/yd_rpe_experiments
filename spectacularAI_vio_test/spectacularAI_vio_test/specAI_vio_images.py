@@ -38,6 +38,7 @@ class VIO(Node):
         # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
         left_can = self.vio_pipeline.monoLeft
         print(left_can.getResolution())
+        print(left_can.getFps())
         # print(left_can)
         left_xout = self.pipeline.createXLinkOut()
         # xout1 = pipeline.create(dai.node.XLinkOut)
