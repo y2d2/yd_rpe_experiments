@@ -36,8 +36,8 @@ class VIO(Node):
         self.vio_pub = self.create_publisher(Odometry, 'vio', 10)
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
         # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
-        left_xout = self.vio_pipeline.getLeftCameraOutput()
-        right_xout = self.vio_pipeline.getRightCameraOutput()
+        left_xout = self.vio_pipeline.xoutLeft
+        right_xout = self.vio_pipeline.xoutRight
         # Create device and start VIO session
         self.device = depthai.Device(self.pipeline)
         self.vio_session = self.vio_pipeline.startSession(self.device)
