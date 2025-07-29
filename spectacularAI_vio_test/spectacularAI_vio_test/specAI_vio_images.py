@@ -116,6 +116,7 @@ class VIO(Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = frame_id
         msg.format = "jpeg"
+        print("I'm here")
         msg.data = frame.getData()
         publisher.publish(msg)
 
