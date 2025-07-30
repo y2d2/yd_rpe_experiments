@@ -97,10 +97,6 @@ class VIO(Node):
         right_xout.setStreamName("xoutright")
         rightEncoder.bitstream.link(right_xout.input)
 
-        imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
-        imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
-        imu.setBatchReportThreshold(1)
-        imu.setMaxBatchReports(10)
 
         # left_can.out.link(left_xout.input)
 
@@ -240,6 +236,7 @@ class VIO(Node):
         # accel = imu_packet.accel
         imu_data_list = frame.getData()
         # print(imu_data_list)
+        print("IMU data len:", len(frame.getData()))
 
         if len(imu_data_list) == 0:
             self.get_logger().warn("no data")
