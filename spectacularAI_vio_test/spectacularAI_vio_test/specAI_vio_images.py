@@ -1,10 +1,12 @@
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import CompressedImage
+from sensor_msgs.msg import CompressedImage, Imu
 from nav_msgs.msg import Odometry
 import depthai
 import spectacularAI
 import numpy as np
+
+
 
 class VIO(Node):
     def __init__(self):
