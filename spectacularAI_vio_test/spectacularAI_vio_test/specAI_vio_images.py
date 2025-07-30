@@ -44,8 +44,6 @@ class VIO(Node):
         right_cam = self.vio_pipeline.monoRight
 
 
-
-
         # print(left_can)
 
         leftEncoder = self.pipeline.createVideoEncoder()
