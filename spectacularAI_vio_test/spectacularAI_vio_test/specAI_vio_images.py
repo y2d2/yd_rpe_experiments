@@ -146,8 +146,8 @@ class VIO(Node):
         for imuPacket in imuPackets:
             acceleroValues = imuPacket.acceleroMeter
             gyroValues = imuPacket.gyroscope
-            print(imuPacket.acceleroMeter)
-            print(imuPacket.acceleroMeter.x)
+            print(imuPacket.acceleroMeter.x, imuPacket.acceleroMeter.y , imuPacket.acceleroMeter.z )
+            print(gyroValues.x, gyroValues.y, gyroValues.z)
 
         # imu_data_list = frame.getData()
         # self.get_logger().info(f"IMU data len: {len(imu_data_list)}")
