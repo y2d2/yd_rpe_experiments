@@ -141,7 +141,7 @@ class VIO(Node):
             self.get_logger().warn('frame is None')
             return
 
-        imu_data_list = frame.getData()
+        imu_data_list = frame.get()
         self.get_logger().info(f"IMU data len: {len(imu_data_list)}")
 
         if len(imu_data_list) == 0:
