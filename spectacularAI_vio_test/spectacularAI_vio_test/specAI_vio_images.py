@@ -235,12 +235,19 @@ class VIO(Node):
         imu_msg.header.frame_id = frame_id
         print("hello")
         # accel = imu_packet.accel
-        print(f"from Imu : {dir(Imu)}")
-        print(f"from imu_packet : {dir(imu_packet)}")
+        imu_data_list = frame.getData()
+        print(imu_data_list)
+
+        if len(imu_data_list) == 0:
+            self.get_logger().warn("no data")
+            return
 
 
         print("i'm further")
         # gyro = imu_packet.gyroscope
+        data = imu_data_list[0]
+        accel = data.accelerometer.raw
+        gyro = data.gyro.raw
 
         # Linear acceleration (in m/s²)
         imu_msg.linear_acceleration.x = accel.x
