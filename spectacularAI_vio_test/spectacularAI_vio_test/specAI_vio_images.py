@@ -40,9 +40,25 @@ class VIO(Node):
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
         self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
 
+        self.oak_imu_pub = self.create_publisher(Imu, 'oak/imu', 10)
+
         left_cam = self.vio_pipeline.monoLeft
         right_cam = self.vio_pipeline.monoRight
+        # Create IMU node
+        imu = self.pipeline.createIMU()
 
+        # Enable IMU sensors: accelerometer and gyroscope
+        imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
+        imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
+
+        # Optionally: batch reports together
+        imu.setBatchReportThreshold(1)
+        imu.setMaxBatchReports(10)
+
+        # Create XLinkOut for IMU
+        xout_imu = self.pipeline.createXLinkOut()
+        xout_imu.setStreamName("imu")
+        imu.out.link(xout_imu.input)
 
         # print(left_can)
 
@@ -87,12 +103,33 @@ class VIO(Node):
         self.device = depthai.Device(self.pipeline)
         self.vio_session = self.vio_pipeline.startSession(self.device)
 
+
         # self.left_q = self.device.getOutputQueue(name=self.left_enc.getOutputQueueName(),
         #                                          maxSize=4, blocking=False)
         # self.right_q = self.device.getOutputQueue(name=self.right_enc.getOutputQueueName(),
         #                                           maxSize=4, blocking=False)
 
         # Get encoder output queues
+
+        # Create IMU node
+        imu = self.pipeline.createIMU()
+
+        # Enable IMU sensors: accelerometer and gyroscope
+        imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
+        imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
+
+        # Optionally: batch reports together
+        imu.setBatchReportThreshold(1)
+        imu.setMaxBatchReports(10)
+
+        # Create XLinkOut for IMU
+        xout_imu = self.pipeline.createXLinkOut()
+        xout_imu.setStreamName("imu")
+        imu.out.link(xout_imu.input)
+
+        self.imuQueue = self.device.getOutputQueue(name="imu", maxSize=10, blocking=False)
+
+
         self.leftQueue = self.device.getOutputQueue(name="xoutleft", maxSize=4, blocking=False)
         self.rightQueue = self.device.getOutputQueue(name="xoutright", maxSize=4, blocking=False)
         # self.rightQueue = self.device.getOutputQueue(name=self.rightEncoder.getOutputQueueName(), maxSize=4, blocking=False)
@@ -126,6 +163,28 @@ class VIO(Node):
 
             if right_frame is not None:
                 self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
+
+        if self.imuQueue.has():
+            imuPacket = self.imuQueue.get()
+            accel = imuPacket.acceleroMeter
+            gyro = imuPacket.gyroscope
+
+            msg = Imu()
+            msg.header.stamp = self.get_clock().now().to_msg()
+            msg.header.frame_id = "oak_imu"
+
+            # Fill orientation if you use fusion later (else keep it zeroed)
+            msg.orientation_covariance[0] = -1  # No orientation estimate
+
+            msg.linear_acceleration.x = accel.x
+            msg.linear_acceleration.y = accel.y
+            msg.linear_acceleration.z = accel.z
+
+            msg.angular_velocity.x = gyro.x
+            msg.angular_velocity.y = gyro.y
+            msg.angular_velocity.z = gyro.z
+
+            self.oak_imu_pub.publish(msg)
 
         # if self.rightQueue.has():
         #     right_frame = self.rightQueue.get()
