@@ -158,9 +158,9 @@ class VIO(Node):
 
             imu_msg.orientation_covariance[0] = -1.0
 
-            imu_msg.linear_acceleration.x = out.accelerometer.x
-            imu_msg.linear_acceleration.y = out.accelerometer.y
-            imu_msg.linear_acceleration.z = out.accelerometer.z
+            imu_msg.linear_acceleration.x = 0.0
+            imu_msg.linear_acceleration.y = 0.0
+            imu_msg.linear_acceleration.z = 0.0
 
             imu_msg.angular_velocity.x = out.gyroscope.x
             imu_msg.angular_velocity.y = out.gyroscope.y
