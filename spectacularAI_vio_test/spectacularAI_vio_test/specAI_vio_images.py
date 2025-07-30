@@ -47,20 +47,20 @@ class VIO(Node):
         left_cam = self.vio_pipeline.monoLeft
         right_cam = self.vio_pipeline.monoRight
         # Create IMU node
-        imu = self.pipeline.createIMU()
+        imu = self.vio_pipeline.imu
 
-        # Enable IMU sensors: accelerometer and gyroscope
-        imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
-        imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
-
-        # Optionally: batch reports together
-        imu.setBatchReportThreshold(1)
-        imu.setMaxBatchReports(10)
-
-        # Create XLinkOut for IMU
-        xout_imu = self.pipeline.createXLinkOut()
-        xout_imu.setStreamName("imu")
-        imu.out.link(xout_imu.input)
+        # # Enable IMU sensors: accelerometer and gyroscope
+        # imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
+        # imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
+        #
+        # # Optionally: batch reports together
+        # imu.setBatchReportThreshold(1)
+        # imu.setMaxBatchReports(10)
+        #
+        # # Create XLinkOut for IMU
+        # xout_imu = self.pipeline.createXLinkOut()
+        # xout_imu.setStreamName("imu")
+        # imu.out.link(xout_imu.input)
 
         # print(left_can)
 
@@ -113,21 +113,21 @@ class VIO(Node):
 
         # Get encoder output queues
 
-        # Create IMU node
-        imu = self.pipeline.createIMU()
-
-        # Enable IMU sensors: accelerometer and gyroscope
-        imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
-        imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
-
-        # Optionally: batch reports together
-        imu.setBatchReportThreshold(1)
-        imu.setMaxBatchReports(10)
-
-        # Create XLinkOut for IMU
-        xout_imu = self.pipeline.createXLinkOut()
-        xout_imu.setStreamName("imu")
-        imu.out.link(xout_imu.input)
+        # # Create IMU node
+        # imu = self.pipeline.createIMU()
+        #
+        # # Enable IMU sensors: accelerometer and gyroscope
+        # imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
+        # imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
+        #
+        # # Optionally: batch reports together
+        # imu.setBatchReportThreshold(1)
+        # imu.setMaxBatchReports(10)
+        #
+        # # Create XLinkOut for IMU
+        # xout_imu = self.pipeline.createXLinkOut()
+        # xout_imu.setStreamName("imu")
+        # imu.out.link(xout_imu.input)
 
         self.imuQueue = self.device.getOutputQueue(name="imu", maxSize=10, blocking=False)
 
@@ -167,26 +167,26 @@ class VIO(Node):
                 self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
 
         if self.imuQueue.has():
-            imuPacket = self.imuQueue.get()
-            accel = imuPacket.acceleroMeter
-            gyro = imuPacket.gyroscope
+            # imuPacket = self.imuQueue.get()
+            # accel = imuPacket.acceleroMeter
+            # gyro = imuPacket.gyroscope
 
-            msg = Imu()
-            msg.header.stamp = self.get_clock().now().to_msg()
-            msg.header.frame_id = "oak_imu"
+            imu_msg = Imu()
+            imu_msg.header.stamp = self.get_clock().now().to_msg()
+            imu_msg.header.frame_id = "oak_imu"
 
             # Fill orientation if you use fusion later (else keep it zeroed)
-            msg.orientation_covariance[0] = -1  # No orientation estimate
+            imu_msg.orientation_covariance[0] = -1.0  # No orientation estimate
 
-            msg.linear_acceleration.x = accel.x
-            msg.linear_acceleration.y = accel.y
-            msg.linear_acceleration.z = accel.z
+            imu_msg.linear_acceleration.x = out.accelerometer.x
+            imu_msg.linear_acceleration.y = out.accelerometer.y
+            imu_msg.linear_acceleration.z = out.accelerometer.z
 
-            msg.angular_velocity.x = gyro.x
-            msg.angular_velocity.y = gyro.y
-            msg.angular_velocity.z = gyro.z
+            imu_msg.angular_velocity.x = out.gyroscope.x
+            imu_msg.angular_velocity.y = out.gyroscope.y
+            imu_msg.angular_velocity.z = out.gyroscope.z
 
-            self.oak_imu_pub.publish(msg)
+            self.oak_imu_pub.publish(imu_msg)
 
         # if self.rightQueue.has():
         #     right_frame = self.rightQueue.get()
