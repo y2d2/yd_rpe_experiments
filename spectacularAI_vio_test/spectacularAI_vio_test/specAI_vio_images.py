@@ -12,6 +12,8 @@ class VIO(Node):
     def __init__(self):
         super().__init__('spectacularAI_vio_node')
 
+
+
         # Create pipeline and VIO session
         #
         # # Setup mono cameras
@@ -131,6 +133,14 @@ class VIO(Node):
         # xout_imu = self.pipeline.createXLinkOut()
         # xout_imu.setStreamName("imu")
         # imu.out.link(xout_imu.input)
+
+
+        imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
+        imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
+        imu.setBatchReportThreshold(1)
+        imu.setMaxBatchReports(10)
+        imu.out.link(imu_xout.input)
+
 
         self.imuQueue = self.device.getOutputQueue(name="xoutimu", maxSize=10, blocking=False)
 
