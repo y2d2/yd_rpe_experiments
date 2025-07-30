@@ -179,8 +179,9 @@ class VIO(Node):
 
             if right_frame is not None:
                 self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
-        print("hello")
         if self.imuQueue.has():
+            print("hello")
+
             imu_frame = self.imuQueue.get()
             if imu_frame is not None:
                 self.publish_imu(imu_frame, self.oakd_imu_pub, 'imu')
