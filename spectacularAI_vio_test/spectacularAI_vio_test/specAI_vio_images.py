@@ -226,7 +226,7 @@ class VIO(Node):
 
     def publish_imu(self, frame, publisher, frame_id):
         print("hello")
-        imu_packet = frame.get()
+        imu_packet = frame
         print("i'm further")
         print(imu_packet)
         if imu_packet is None:
