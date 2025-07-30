@@ -42,7 +42,7 @@ class VIO(Node):
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
         self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
 
-        self.oak_imu_pub = self.create_publisher(Imu, 'oak/imu', 10)
+        self.oak_imu_pub = self.create_publisher(Imu, 'oakd/imu', 10)
 
         left_cam = self.vio_pipeline.monoLeft
         right_cam = self.vio_pipeline.monoRight
@@ -152,9 +152,8 @@ class VIO(Node):
 
             imu_msg = Imu()
             imu_msg.header.stamp = self.get_clock().now().to_msg()
-            imu_msg.header.frame_id = "oak_imu"
+            imu_msg.header.frame_id = "oakd_imu"
 
-            # Fill orientation if you use fusion later (else keep it zeroed)
             imu_msg.orientation_covariance[0] = -1.0  # No orientation estimate
 
             imu_msg.linear_acceleration.x = out.accelerometer.x
