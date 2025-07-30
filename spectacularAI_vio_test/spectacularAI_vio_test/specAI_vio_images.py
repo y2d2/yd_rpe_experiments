@@ -166,7 +166,7 @@ class VIO(Node):
             if right_frame is not None:
                 self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
 
-        if self.imuQueue.has():
+        if True:
             # imuPacket = self.imuQueue.get()
             # accel = imuPacket.acceleroMeter
             # gyro = imuPacket.gyroscope
