@@ -50,7 +50,11 @@ class VIO(Node):
         left_cam = self.vio_pipeline.monoLeft
         right_cam = self.vio_pipeline.monoRight
         # Create IMU node
-        # imu = self.vio_pipeline.imu
+        imu = self.vio_pipeline.imu
+        imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
+        imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
+        imu.setBatchReportThreshold(1)
+        imu.setMaxBatchReports(10)
 
         # # Enable IMU sensors: accelerometer and gyroscope
         # imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
@@ -83,10 +87,10 @@ class VIO(Node):
 
         left_xout = self.pipeline.createXLinkOut()
         right_xout = self.pipeline.createXLinkOut()
+        imu_xout = self.pipeline.createXLinkOut()
 
-        # imu_xout = self.pipeline.createXLinkOut()
-        # imu_xout.setStreamName('xoutimu')
-        # imu.out.link(imu_xout.input)
+        imu_xout.setStreamName('xoutimu')
+        imu.out.link(imu_xout.input)
 
         # xout1 = pipeline.create(dai.node.XLinkOut)
         #
@@ -142,7 +146,7 @@ class VIO(Node):
 
 
 
-        # self.imuQueue = self.device.getOutputQueue(name="xoutimu", maxSize=30, blocking=False)
+        self.imuQueue = self.device.getOutputQueue(name="xoutimu", maxSize=30, blocking=False)
         self.leftQueue = self.device.getOutputQueue(name="xoutleft", maxSize=4, blocking=False)
         self.rightQueue = self.device.getOutputQueue(name="xoutright", maxSize=4, blocking=False)
         # self.rightQueue = self.device.getOutputQueue(name=self.rightEncoder.getOutputQueueName(), maxSize=4, blocking=False)
@@ -161,19 +165,10 @@ class VIO(Node):
             orientation = np.array([out.pose.orientation.x, out.pose.orientation.y, out.pose.orientation.z, out.pose.orientation.w])
             self.publish_vio(vel, angul_vel, pose, orientation)
             print(hasattr(out, 'imuData'))
-            if hasattr(out, 'imuData') and len(out.imuData) > 0:
-                imu_sample = out.imuData[0]
-                self.publish_imu(imu_sample, self.oakd_imu_pub, 'oakd_imu')
 
-
-
-        # Publish compressed images
         if self.leftQueue.has():
             left_frame = self.leftQueue.get()
-            # left_frame = self.leftQueue.tryGet()
-            # print(left_frame)
-            # if left_frame is not None:
-            #     cv2.imshow('left', left_frame.getCvFrame())
+
             if left_frame is not None:
                 self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
 
@@ -182,13 +177,14 @@ class VIO(Node):
 
             if right_frame is not None:
                 self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
-        # print(self.imuQueue.has())
-        # if self.imuQueue.has():
-        #
-        #     imu_frame = self.imuQueue.get()
-        #
-        #     if imu_frame is not None:
-        #         self.publish_imu(imu_frame, self.oakd_imu_pub, 'imu')
+
+        print(self.imuQueue.has())
+        if self.imuQueue.has():
+
+            imu_frame = self.imuQueue.get()
+
+            if imu_frame is not None:
+                self.publish_imu(imu_frame, self.oakd_imu_pub, 'imu')
 
 
 
@@ -227,66 +223,42 @@ class VIO(Node):
         # print("I'm here")
         publisher.publish(msg)
 
-    # def publish_imu(self, frame, publisher, frame_id):
-    #     imu_packet = frame
-    #     # print(imu_packet)
-    #     if imu_packet is None:
-    #         return
-    #
-    #     imu_msg = Imu()
-    #     imu_msg.header.stamp = self.get_clock().now().to_msg()
-    #     imu_msg.header.frame_id = frame_id
-    #     # print("hello")
-    #     # accel = imu_packet.accel
-    #     imu_data_list = frame.getData()
-    #     # print(imu_data_list)
-    #     print("IMU data len:", len(frame.getData()))
-    #
-    #     if len(imu_data_list) == 0:
-    #         self.get_logger().warn("no data")
-    #         return
-    #
-    #
-    #     print("i'm further")
-    #     # gyro = imu_packet.gyroscope
-    #     data = imu_data_list[0]
-    #     accel = data.accelerometer.raw
-    #     gyro = data.gyro.raw
-    #
-    #     # Linear acceleration (in m/s²)
-    #     imu_msg.linear_acceleration.x = accel.x
-    #     imu_msg.linear_acceleration.y = accel.y
-    #     imu_msg.linear_acceleration.z = accel.z
-    #
-    #     # Angular velocity (in rad/s)
-    #     imu_msg.angular_velocity.x = gyro.x
-    #     imu_msg.angular_velocity.y = gyro.y
-    #     imu_msg.angular_velocity.z = gyro.z
-    #
-    #     # Orientation unknown: disable it
-    #     imu_msg.orientation_covariance[0] = -1.0
-    #
-    #     publisher.publish(imu_msg)
+    def publish_imu(self, frame, publisher, frame_id):
+        if frame is None:
+            self.get_logger().warn('frame is None')
+            return
 
-    def publish_imu(self, data, publisher, frame_id):
-        msg = Imu()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = frame_id
+        imu_data_list = frame.getData()
+        self.get_logger().info(f"IMU data len: {len(imu_data_list)}")
 
-        # Assume 'data' has 'accelerometer' and 'gyroscope' with 'raw' fields
+        if len(imu_data_list) == 0:
+            self.get_logger().warn("no data")
+            return
+
+        data = imu_data_list[0]
         accel = data.accelerometer.raw
-        gyro = data.gyroscope.raw
+        gyro = data.gyro.raw
 
-        msg.linear_acceleration.x = accel.x
-        msg.linear_acceleration.y = accel.y
-        msg.linear_acceleration.z = accel.z
+        imu_msg = Imu()
+        imu_msg.header.stamp = self.get_clock().now().to_msg()
+        imu_msg.header.frame_id = frame_id
 
-        msg.angular_velocity.x = gyro.x
-        msg.angular_velocity.y = gyro.y
-        msg.angular_velocity.z = gyro.z
 
-        msg.orientation_covariance[0] = -1.0  # Unknown orientation
-        publisher.publish(msg)
+        imu_msg.linear_acceleration.x = accel.x
+        imu_msg.linear_acceleration.y = accel.y
+        imu_msg.linear_acceleration.z = accel.z
+
+
+        imu_msg.angular_velocity.x = gyro.x
+        imu_msg.angular_velocity.y = gyro.y
+        imu_msg.angular_velocity.z = gyro.z
+
+
+        imu_msg.orientation_covariance[0] = -1.0
+
+        publisher.publish(imu_msg)
+
+
 
 
 def main(args=None):
