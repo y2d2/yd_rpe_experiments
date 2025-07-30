@@ -143,7 +143,7 @@ class VIO(Node):
 
 
         self.imuQueue = self.device.getOutputQueue(name="xoutimu", maxSize=10, blocking=False)
-
+        print(self.imuQueue, self.imuQueue.get())
         self.leftQueue = self.device.getOutputQueue(name="xoutleft", maxSize=4, blocking=False)
         self.rightQueue = self.device.getOutputQueue(name="xoutright", maxSize=4, blocking=False)
         # self.rightQueue = self.device.getOutputQueue(name=self.rightEncoder.getOutputQueueName(), maxSize=4, blocking=False)
