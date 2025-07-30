@@ -12,7 +12,6 @@ class VIO(Node):
     def __init__(self):
         super().__init__('spectacularAI_vio_node')
 
-
         self.pipeline = depthai.Pipeline()
 
         self.vio_pipeline = spectacularAI.depthai.Pipeline(self.pipeline)
