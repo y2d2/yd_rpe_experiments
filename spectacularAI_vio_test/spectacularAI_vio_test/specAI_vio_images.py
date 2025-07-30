@@ -150,27 +150,6 @@ class VIO(Node):
             orientation = np.array([out.pose.orientation.x, out.pose.orientation.y, out.pose.orientation.z, out.pose.orientation.w])
             self.publish_vio(vel, angul_vel, pose, orientation)
 
-        # Publish compressed images
-        if self.leftQueue.has():
-            left_frame = self.leftQueue.get()
-            # left_frame = self.leftQueue.tryGet()
-            # print(left_frame)
-            # if left_frame is not None:
-            #     cv2.imshow('left', left_frame.getCvFrame())
-            if left_frame is not None:
-                self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
-
-        if self.rightQueue.has():
-            right_frame = self.leftQueue.get()
-
-            if right_frame is not None:
-                self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
-
-        if True:
-            # imuPacket = self.imuQueue.get()
-            # accel = imuPacket.acceleroMeter
-            # gyro = imuPacket.gyroscope
-
             imu_msg = Imu()
             imu_msg.header.stamp = self.get_clock().now().to_msg()
             imu_msg.header.frame_id = "oak_imu"
@@ -187,6 +166,29 @@ class VIO(Node):
             imu_msg.angular_velocity.z = out.gyroscope.z
 
             self.oak_imu_pub.publish(imu_msg)
+
+        # Publish compressed images
+        if self.leftQueue.has():
+            left_frame = self.leftQueue.get()
+            # left_frame = self.leftQueue.tryGet()
+            # print(left_frame)
+            # if left_frame is not None:
+            #     cv2.imshow('left', left_frame.getCvFrame())
+            if left_frame is not None:
+                self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
+
+        if self.rightQueue.has():
+            right_frame = self.leftQueue.get()
+
+            if right_frame is not None:
+                self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
+
+
+            # imuPacket = self.imuQueue.get()
+            # accel = imuPacket.acceleroMeter
+            # gyro = imuPacket.gyroscope
+
+
 
         # if self.rightQueue.has():
         #     right_frame = self.rightQueue.get()
