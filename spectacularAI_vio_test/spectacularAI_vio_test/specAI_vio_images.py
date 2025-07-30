@@ -143,7 +143,7 @@ class VIO(Node):
 
 
         self.imuQueue = self.device.getOutputQueue(name="xoutimu", maxSize=100, blocking=False)
-
+        print(self.imuQueue.get())
         self.leftQueue = self.device.getOutputQueue(name="xoutleft", maxSize=4, blocking=False)
         self.rightQueue = self.device.getOutputQueue(name="xoutright", maxSize=4, blocking=False)
         # self.rightQueue = self.device.getOutputQueue(name=self.rightEncoder.getOutputQueueName(), maxSize=4, blocking=False)
@@ -179,16 +179,14 @@ class VIO(Node):
 
             if right_frame is not None:
                 self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
+
         if self.imuQueue.has():
             print("hello")
-
             imu_frame = self.imuQueue.get()
+
             if imu_frame is not None:
                 self.publish_imu(imu_frame, self.oakd_imu_pub, 'imu')
 
-            # imuPacket = self.imuQueue.get()
-            # accel = imuPacket.acceleroMeter
-            # gyro = imuPacket.gyroscope
 
 
 
