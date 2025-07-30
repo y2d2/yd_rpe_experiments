@@ -55,7 +55,10 @@ class VIO(Node):
         #
 
         left_xout.setStreamName("xoutleft")
-        left_can.out.link(left_xout.input)
+        left_can.bitstream.link(left_xout.input)
+
+        # left_can.out.link(left_xout.input)
+
         # right_xout = self.vio_pipeline.monoRight.out
         # self.leftEncoder = self.pipeline.createVideoEncoder()
         # self.leftEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
@@ -133,7 +136,7 @@ class VIO(Node):
         msg.format = "jpeg"
         # msg.data = frame.getData()
         msg.data = bytearray(frame.getData())
-        print("I'm here")
+        # print("I'm here")
         publisher.publish(msg)
 
 def main(args=None):
