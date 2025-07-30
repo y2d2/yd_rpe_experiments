@@ -160,7 +160,7 @@ class VIO(Node):
             pose = np.array([out.pose.position.x, out.pose.position.y, out.pose.position.z])
             orientation = np.array([out.pose.orientation.x, out.pose.orientation.y, out.pose.orientation.z, out.pose.orientation.w])
             self.publish_vio(vel, angul_vel, pose, orientation)
-
+            print(hasattr(out, 'imuData'), len(out.imuData) > 0)
             if hasattr(out, 'imuData') and len(out.imuData) > 0:
                 imu_sample = out.imuData[0]
                 self.publish_imu(imu_sample, self.oakd_imu_pub, 'oakd_imu')
