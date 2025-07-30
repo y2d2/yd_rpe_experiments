@@ -85,6 +85,7 @@ class VIO(Node):
 
         imu_xout = self.pipeline.createXLinkOut()
         imu_xout.setStreamName('xoutimu')
+        imu.out.link(imu_xout.input)
 
         # xout1 = pipeline.create(dai.node.XLinkOut)
         #
