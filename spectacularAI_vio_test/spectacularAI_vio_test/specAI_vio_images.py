@@ -225,18 +225,17 @@ class VIO(Node):
         publisher.publish(msg)
 
     def publish_imu(self, frame, publisher, frame_id):
-        print("hello")
         imu_packet = frame
-        print("i'm further")
-        print(imu_packet)
+        # print(imu_packet)
         if imu_packet is None:
             return
 
         imu_msg = Imu()
         imu_msg.header.stamp = self.get_clock().now().to_msg()
         imu_msg.header.frame_id = frame_id
-
+        print("hello")
         accel = imu_packet.acceleroMeter
+        print("i'm further")
         gyro = imu_packet.gyroscope
 
         # Linear acceleration (in m/s²)
