@@ -146,31 +146,28 @@ class VIO(Node):
         for imuPacket in imuPackets:
             acceleroValues = imuPacket.acceleroMeter
             gyroValues = imuPacket.gyroscope
-            # print(imuPacket.acceleroMeter.x, imuPacket.acceleroMeter.y , imuPacket.acceleroMeter.z )
-            # print(gyroValues.x, gyroValues.y, gyroValues.z)
+
+            imu_msg = Imu()
+            imu_msg.header.stamp = self.get_clock().now().to_msg()
+            imu_msg.header.frame_id = frame_id
+
+            imu_msg.linear_acceleration.x = acceleroValues.x
+            imu_msg.linear_acceleration.y = acceleroValues.y
+            imu_msg.linear_acceleration.z = acceleroValues.z
+
+            imu_msg.angular_velocity.x = gyroValues.x
+            imu_msg.angular_velocity.y = gyroValues.y
+            imu_msg.angular_velocity.z = gyroValues.z
+
+            imu_msg.orientation_covariance[0] = -1.0
+
+            publisher.publish(imu_msg)
 
 
 
 
 
-        imu_msg = Imu()
-        imu_msg.header.stamp = self.get_clock().now().to_msg()
-        imu_msg.header.frame_id = frame_id
 
-
-        imu_msg.linear_acceleration.x = acceleroValues.x
-        imu_msg.linear_acceleration.y = acceleroValues.y
-        imu_msg.linear_acceleration.z = acceleroValues.z
-
-
-        imu_msg.angular_velocity.x = gyroValues.x
-        imu_msg.angular_velocity.y = gyroValues.y
-        imu_msg.angular_velocity.z = gyroValues.z
-
-
-        imu_msg.orientation_covariance[0] = -1.0
-
-        publisher.publish(imu_msg)
 
 
 
