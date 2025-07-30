@@ -81,6 +81,9 @@ class VIO(Node):
         left_xout = self.pipeline.createXLinkOut()
         right_xout = self.pipeline.createXLinkOut()
 
+        imu_xout = self.pipeline.createXLinkOut()
+        imu_xout.setStreamName('xoutimu')
+
         # xout1 = pipeline.create(dai.node.XLinkOut)
         #
 
@@ -129,8 +132,7 @@ class VIO(Node):
         # xout_imu.setStreamName("imu")
         # imu.out.link(xout_imu.input)
 
-        # self.imuQueue = self.device.getOutputQueue(name="oak_imu", maxSize=10, blocking=False)
-
+        self.imuQueue = self.device.getOutputQueue(name="xoutimu", maxSize=10, blocking=False)
 
         self.leftQueue = self.device.getOutputQueue(name="xoutleft", maxSize=4, blocking=False)
         self.rightQueue = self.device.getOutputQueue(name="xoutright", maxSize=4, blocking=False)
@@ -154,7 +156,7 @@ class VIO(Node):
             imu_msg.header.stamp = self.get_clock().now().to_msg()
             imu_msg.header.frame_id = "oakd_imu"
 
-            imu_msg.orientation_covariance[0] = -1.0  # No orientation estimate
+            imu_msg.orientation_covariance[0] = -1.0
 
             imu_msg.linear_acceleration.x = out.accelerometer.x
             imu_msg.linear_acceleration.y = out.accelerometer.y
