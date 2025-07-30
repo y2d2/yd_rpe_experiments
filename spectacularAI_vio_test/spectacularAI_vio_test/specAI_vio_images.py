@@ -14,6 +14,7 @@ class VIO(Node):
 
 
 
+
         # Create pipeline and VIO session
         #
         # # Setup mono cameras
@@ -96,6 +97,11 @@ class VIO(Node):
         right_xout.setStreamName("xoutright")
         rightEncoder.bitstream.link(right_xout.input)
 
+        imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
+        imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
+        imu.setBatchReportThreshold(1)
+        imu.setMaxBatchReports(10)
+
         # left_can.out.link(left_xout.input)
 
         # right_xout = self.vio_pipeline.monoRight.out
@@ -136,10 +142,7 @@ class VIO(Node):
         # imu.out.link(xout_imu.input)
 
 
-        imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
-        imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
-        imu.setBatchReportThreshold(1)
-        imu.setMaxBatchReports(10)
+
 
 
 
@@ -233,10 +236,10 @@ class VIO(Node):
         imu_msg = Imu()
         imu_msg.header.stamp = self.get_clock().now().to_msg()
         imu_msg.header.frame_id = frame_id
-        print("hello")
+        # print("hello")
         # accel = imu_packet.accel
         imu_data_list = frame.getData()
-        print(imu_data_list)
+        # print(imu_data_list)
 
         if len(imu_data_list) == 0:
             self.get_logger().warn("no data")
