@@ -28,10 +28,7 @@ class VIO(Node):
         right_cam = self.vio_pipeline.monoRight
 
         imu = self.vio_pipeline.imu
-        print(imu.out)
-        # imu.enableIMUSensor([depthai.IMUSensor.ACCELEROMETER_RAW, depthai.IMUSensor.GYROSCOPE_RAW], 500)
-        # imu.setBatchReportThreshold(1)
-        # imu.setMaxBatchReports(10)
+
 
 
         leftEncoder = self.pipeline.createVideoEncoder()
@@ -75,7 +72,6 @@ class VIO(Node):
 
 
     def processOutput(self):
-        # Publish VIO
         while self.vio_session.hasOutput():
             out = self.vio_session.getOutput()
             vel = np.array([out.velocity.x, out.velocity.y, out.velocity.z])
@@ -97,9 +93,7 @@ class VIO(Node):
             if right_frame is not None:
                 self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
 
-        print(self.imuQueue.has())
         if self.imuQueue.has():
-
             imu_frame = self.imuQueue.get()
 
             if imu_frame is not None:
