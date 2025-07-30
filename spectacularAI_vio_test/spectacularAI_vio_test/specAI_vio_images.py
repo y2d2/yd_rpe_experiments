@@ -41,6 +41,7 @@ class VIO(Node):
 
         left_can = self.vio_pipeline.monoLeft
 
+
         # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
 
         # print(left_can)
