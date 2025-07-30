@@ -135,11 +135,11 @@ class VIO(Node):
         # imu.out.link(xout_imu.input)
 
 
-        imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
-        imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
-        imu.setBatchReportThreshold(1)
-        imu.setMaxBatchReports(10)
-        imu.out.link(imu_xout.input)
+        # imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
+        # imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
+        # imu.setBatchReportThreshold(1)
+        # imu.setMaxBatchReports(10)
+        # imu.out.link(imu_xout.input)
 
 
         self.imuQueue = self.device.getOutputQueue(name="xoutimu", maxSize=10, blocking=False)
@@ -227,6 +227,7 @@ class VIO(Node):
 
     def publish_imu(self, frame, publisher, frame_id):
         imu_packet = frame.get()
+        print(imu_packet)
         if imu_packet is None:
             return
 
