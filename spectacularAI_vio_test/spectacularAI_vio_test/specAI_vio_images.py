@@ -183,7 +183,7 @@ class VIO(Node):
         if self.imuQueue.has():
 
             imu_frame = self.imuQueue.get()
-            print("hello")
+
             if imu_frame is not None:
                 self.publish_imu(imu_frame, self.oakd_imu_pub, 'imu')
 
@@ -226,6 +226,7 @@ class VIO(Node):
 
     def publish_imu(self, frame, publisher, frame_id):
         imu_packet = frame.get()
+        print("hello")
         print(imu_packet)
         if imu_packet is None:
             return
