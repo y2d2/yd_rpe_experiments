@@ -52,14 +52,14 @@ class VIO(Node):
         leftEncoder.setDefaultProfilePreset(
             30, depthai.VideoEncoderProperties.Profile.MJPEG
         )
-        left_can.out.link(leftEncoder.input)
+        left_cam.out.link(leftEncoder.input)
 
 
         rightEncoder = self.pipeline.createVideoEncoder()
         rightEncoder.setDefaultProfilePreset(
             30, depthai.VideoEncoderProperties.Profile.MJPEG
         )
-        right_can.out.link(rightEncoder.input)
+        right_cam.out.link(rightEncoder.input)
 
 
         left_xout = self.pipeline.createXLinkOut()
