@@ -38,8 +38,11 @@ class VIO(Node):
 
         self.vio_pub = self.create_publisher(Odometry, 'vio', 10)
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
-        # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
+
         left_can = self.vio_pipeline.monoLeft
+
+        # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
+
         # print(left_can)
 
         leftEncoder = self.pipeline.createVideoEncoder()
@@ -55,7 +58,7 @@ class VIO(Node):
         #
 
         left_xout.setStreamName("xoutleft")
-        left_can.bitstream.link(left_xout.input)
+        leftEncoder.bitstream.link(left_xout.input)
 
         # left_can.out.link(left_xout.input)
 
