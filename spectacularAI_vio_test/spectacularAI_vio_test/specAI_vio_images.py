@@ -129,7 +129,7 @@ class VIO(Node):
         # xout_imu.setStreamName("imu")
         # imu.out.link(xout_imu.input)
 
-        self.imuQueue = self.device.getOutputQueue(name="oak_imu", maxSize=10, blocking=False)
+        # self.imuQueue = self.device.getOutputQueue(name="oak_imu", maxSize=10, blocking=False)
 
 
         self.leftQueue = self.device.getOutputQueue(name="xoutleft", maxSize=4, blocking=False)
