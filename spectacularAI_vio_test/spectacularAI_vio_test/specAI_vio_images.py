@@ -142,7 +142,7 @@ class VIO(Node):
             self.get_logger().warn('frame is None')
             return
 
-        imuPackets = imuData.packets
+        imuPackets = frame.packets
         for imuPacket in imuPackets:
             acceleroValues = imuPacket.acceleroMeter
             gyroValues = imuPacket.gyroscope
