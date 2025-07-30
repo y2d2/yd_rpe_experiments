@@ -235,7 +235,7 @@ class VIO(Node):
         imu_msg.header.frame_id = frame_id
         print("hello")
         # accel = imu_packet.accel
-        imu_msg.data = imu_packet.getData()
+        print(imu_packet.getData())
         print("i'm further")
         # gyro = imu_packet.gyroscope
 
