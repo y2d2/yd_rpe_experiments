@@ -182,7 +182,7 @@ class VIO(Node):
 
             if right_frame is not None:
                 self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
-        print(self.imuQueue.has())
+        # print(self.imuQueue.has())
         # if self.imuQueue.has():
         #
         #     imu_frame = self.imuQueue.get()
