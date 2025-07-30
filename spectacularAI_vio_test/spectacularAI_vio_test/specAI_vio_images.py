@@ -38,11 +38,13 @@ class VIO(Node):
 
         self.vio_pub = self.create_publisher(Odometry, 'vio', 10)
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
+        self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
 
-        left_can = self.vio_pipeline.monoLeft
+        left_cam = self.vio_pipeline.monoLeft
+        right_cam = self.vio_pipeline.monoRight
 
 
-        # self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
+
 
         # print(left_can)
 
@@ -53,13 +55,24 @@ class VIO(Node):
         left_can.out.link(leftEncoder.input)
 
 
+        rightEncoder = self.pipeline.createVideoEncoder()
+        rightEncoder.setDefaultProfilePreset(
+            30, depthai.VideoEncoderProperties.Profile.MJPEG
+        )
+        right_can.out.link(rightEncoder.input)
+
+
         left_xout = self.pipeline.createXLinkOut()
+        right_xout = self.pipeline.createXLinkOut()
 
         # xout1 = pipeline.create(dai.node.XLinkOut)
         #
 
         left_xout.setStreamName("xoutleft")
         leftEncoder.bitstream.link(left_xout.input)
+
+        right_xout.setStreamName("xoutright")
+        rightEncoder.bitstream.link(right_xout.input)
 
         # left_can.out.link(left_xout.input)
 
@@ -83,6 +96,7 @@ class VIO(Node):
 
         # Get encoder output queues
         self.leftQueue = self.device.getOutputQueue(name="xoutleft", maxSize=4, blocking=False)
+        self.rightQueue = self.device.getOutputQueue(name="xoutright", maxSize=4, blocking=False)
         # self.rightQueue = self.device.getOutputQueue(name=self.rightEncoder.getOutputQueueName(), maxSize=4, blocking=False)
 
         # Start timer
@@ -108,6 +122,12 @@ class VIO(Node):
             #     cv2.imshow('left', left_frame.getCvFrame())
             if left_frame is not None:
                 self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
+
+        if self.rightQueue.has():
+            right_frame = self.leftQueue.get()
+
+            if right_frame is not None:
+                self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
 
         # if self.rightQueue.has():
         #     right_frame = self.rightQueue.get()
