@@ -149,7 +149,7 @@ class VIO(Node):
         # self.rightQueue = self.device.getOutputQueue(name=self.rightEncoder.getOutputQueueName(), maxSize=4, blocking=False)
 
         # Start timer
-        self.timer = self.create_timer(0.01, self.processOutput)  # e.g., 100 Hz
+        self.timer = self.create_timer(0.001, self.processOutput)  # e.g., 100 Hz
 
 
     def processOutput(self):
