@@ -28,9 +28,10 @@ class VIO(Node):
         right_cam = self.vio_pipeline.monoRight
 
         imu = self.vio_pipeline.imu
-        imu.enableIMUSensor([depthai.IMUSensor.ACCELEROMETER_RAW, depthai.IMUSensor.GYROSCOPE_RAW], 500)
-        imu.setBatchReportThreshold(1)
-        imu.setMaxBatchReports(10)
+        print(imu.out)
+        # imu.enableIMUSensor([depthai.IMUSensor.ACCELEROMETER_RAW, depthai.IMUSensor.GYROSCOPE_RAW], 500)
+        # imu.setBatchReportThreshold(1)
+        # imu.setMaxBatchReports(10)
 
 
         leftEncoder = self.pipeline.createVideoEncoder()
