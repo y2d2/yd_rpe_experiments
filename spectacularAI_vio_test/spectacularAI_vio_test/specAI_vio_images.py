@@ -13,29 +13,6 @@ class VIO(Node):
         super().__init__('spectacularAI_vio_node')
 
 
-
-
-        # Create pipeline and VIO session
-        #
-        # # Setup mono cameras
-        # self.left = self.pipeline.createMonoCamera()
-        # # self.right = self.pipeline.createMonoCamera()
-        # self.left.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_400_P)
-        # # self.right.setResolution(depthai.MonoCameraProperties.SensorResolution.THE_400_P)
-        # self.left.setBoardSocket(depthai.CameraBoardSocket.LEFT)
-        # # self.right.setBoardSocket(depthai.CameraBoardSocket.RIGHT)
-        #
-        # # Setup video encoders
-        # self.leftEncoder = self.pipeline.createVideoEncoder()
-        # # self.rightEncoder = self.pipeline.createVideoEncoder()
-        # self.leftEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
-        # # self.rightEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
-        #
-        # # Link cameras to encoders
-        # self.left.out.link(self.leftEncoder.input)
-        # # self.right.out.link(self.rightEncoder.input)
-
-        # Setup VIO
         self.pipeline = depthai.Pipeline()
 
         self.vio_pipeline = spectacularAI.depthai.Pipeline(self.pipeline)
@@ -49,27 +26,13 @@ class VIO(Node):
 
         left_cam = self.vio_pipeline.monoLeft
         right_cam = self.vio_pipeline.monoRight
-        # Create IMU node
+
         imu = self.vio_pipeline.imu
         imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
         imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
         imu.setBatchReportThreshold(1)
         imu.setMaxBatchReports(10)
 
-        # # Enable IMU sensors: accelerometer and gyroscope
-        # imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
-        # imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
-        #
-        # # Optionally: batch reports together
-        # imu.setBatchReportThreshold(1)
-        # imu.setMaxBatchReports(10)
-        #
-        # # Create XLinkOut for IMU
-        # xout_imu = self.pipeline.createXLinkOut()
-        # xout_imu.setStreamName("imu")
-        # imu.out.link(xout_imu.input)
-
-        # print(left_can)
 
         leftEncoder = self.pipeline.createVideoEncoder()
         leftEncoder.setDefaultProfilePreset(
@@ -92,8 +55,6 @@ class VIO(Node):
         imu_xout.setStreamName('xoutimu')
         imu.out.link(imu_xout.input)
 
-        # xout1 = pipeline.create(dai.node.XLinkOut)
-        #
 
         left_xout.setStreamName("xoutleft")
         leftEncoder.bitstream.link(left_xout.input)
@@ -102,56 +63,14 @@ class VIO(Node):
         rightEncoder.bitstream.link(right_xout.input)
 
 
-        # left_can.out.link(left_xout.input)
-
-        # right_xout = self.vio_pipeline.monoRight.out
-        # self.leftEncoder = self.pipeline.createVideoEncoder()
-        # self.leftEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
-
-
-        # self.rightEncoder = self.pipeline.createVideoEncoder()
-        # self.rightEncoder.setDefaultProfilePreset(1, depthai.VideoEncoderProperties.Profile.MJPEG)
-
-
-        # Create device and start VIO session
         self.device = depthai.Device(self.pipeline)
         self.vio_session = self.vio_pipeline.startSession(self.device)
-
-
-        # self.left_q = self.device.getOutputQueue(name=self.left_enc.getOutputQueueName(),
-        #                                          maxSize=4, blocking=False)
-        # self.right_q = self.device.getOutputQueue(name=self.right_enc.getOutputQueueName(),
-        #                                           maxSize=4, blocking=False)
-
-        # Get encoder output queues
-
-        # # Create IMU node
-        # imu = self.pipeline.createIMU()
-        #
-        # # Enable IMU sensors: accelerometer and gyroscope
-        # imu.enableIMUSensor(depthai.IMUSensor.ACCELEROMETER_RAW, 500)
-        # imu.enableIMUSensor(depthai.IMUSensor.GYROSCOPE_RAW, 500)
-        #
-        # # Optionally: batch reports together
-        # imu.setBatchReportThreshold(1)
-        # imu.setMaxBatchReports(10)
-        #
-        # # Create XLinkOut for IMU
-        # xout_imu = self.pipeline.createXLinkOut()
-        # xout_imu.setStreamName("imu")
-        # imu.out.link(xout_imu.input)
-
-
-
-
 
 
         self.imuQueue = self.device.getOutputQueue(name="xoutimu", maxSize=30, blocking=False)
         self.leftQueue = self.device.getOutputQueue(name="xoutleft", maxSize=4, blocking=False)
         self.rightQueue = self.device.getOutputQueue(name="xoutright", maxSize=4, blocking=False)
-        # self.rightQueue = self.device.getOutputQueue(name=self.rightEncoder.getOutputQueueName(), maxSize=4, blocking=False)
 
-        # Start timer
         self.timer = self.create_timer(0.01, self.processOutput)  # e.g., 100 Hz
 
 
@@ -187,11 +106,6 @@ class VIO(Node):
                 self.publish_imu(imu_frame, self.oakd_imu_pub, 'imu')
 
 
-
-
-        # if self.rightQueue.has():
-        #     right_frame = self.rightQueue.get()
-        #     self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
 
     def publish_vio(self, vel, angul_vel, pose, orientation):
         msg = Odometry()
