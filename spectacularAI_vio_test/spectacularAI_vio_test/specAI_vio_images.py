@@ -79,7 +79,7 @@ class VIO(Node):
             pose = np.array([out.pose.position.x, out.pose.position.y, out.pose.position.z])
             orientation = np.array([out.pose.orientation.x, out.pose.orientation.y, out.pose.orientation.z, out.pose.orientation.w])
             self.publish_vio(vel, angul_vel, pose, orientation)
-            print(hasattr(out, 'imuData'))
+
 
         if self.leftQueue.has():
             left_frame = self.leftQueue.get()
@@ -156,13 +156,6 @@ class VIO(Node):
             imu_msg.orientation_covariance[0] = -1.0
 
             publisher.publish(imu_msg)
-
-
-
-
-
-
-
 
 
 
