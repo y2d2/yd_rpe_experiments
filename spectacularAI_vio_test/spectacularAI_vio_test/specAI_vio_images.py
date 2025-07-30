@@ -177,7 +177,7 @@ class VIO(Node):
                 self.publish_compressed_image(left_frame, self.left_img_pub, 'left_camera')
 
         if self.rightQueue.has():
-            right_frame = self.leftQueue.get()
+            right_frame = self.rightQueue.get()
 
             if right_frame is not None:
                 self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
