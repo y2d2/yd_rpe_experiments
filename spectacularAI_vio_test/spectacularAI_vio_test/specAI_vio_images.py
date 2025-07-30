@@ -42,7 +42,7 @@ class VIO(Node):
         self.left_img_pub = self.create_publisher(CompressedImage, 'left/image/compressed', 10)
         self.right_img_pub = self.create_publisher(CompressedImage, 'right/image/compressed', 10)
 
-        self.oak_imu_pub = self.create_publisher(Imu, 'oakd/imu', 10)
+        self.oakd_imu_pub = self.create_publisher(Imu, 'oakd/imu', 10)
 
         left_cam = self.vio_pipeline.monoLeft
         right_cam = self.vio_pipeline.monoRight
@@ -152,21 +152,7 @@ class VIO(Node):
             orientation = np.array([out.pose.orientation.x, out.pose.orientation.y, out.pose.orientation.z, out.pose.orientation.w])
             self.publish_vio(vel, angul_vel, pose, orientation)
 
-            imu_msg = Imu()
-            imu_msg.header.stamp = self.get_clock().now().to_msg()
-            imu_msg.header.frame_id = "oakd_imu"
 
-            imu_msg.orientation_covariance[0] = -1.0
-
-            imu_msg.linear_acceleration.x = 0.0
-            imu_msg.linear_acceleration.y = 0.0
-            imu_msg.linear_acceleration.z = 0.0
-
-            imu_msg.angular_velocity.x = out.gyroscope.x
-            imu_msg.angular_velocity.y = out.gyroscope.y
-            imu_msg.angular_velocity.z = out.gyroscope.z
-
-            self.oak_imu_pub.publish(imu_msg)
 
         # Publish compressed images
         if self.leftQueue.has():
@@ -184,6 +170,10 @@ class VIO(Node):
             if right_frame is not None:
                 self.publish_compressed_image(right_frame, self.right_img_pub, 'right_camera')
 
+        if self.imuQueue.has():
+            imu_frame = self.imuQueue.get()
+            if imu_frame is not None:
+                self.publish_imu(imu_frame, self.oakd_imu_pub, 'imu')
 
             # imuPacket = self.imuQueue.get()
             # accel = imuPacket.acceleroMeter
@@ -224,6 +214,33 @@ class VIO(Node):
         msg.data = bytearray(frame.getData())
         # print("I'm here")
         publisher.publish(msg)
+
+    def publish_imu(self, frame, publisher, frame_id):
+        imu_packet = frame.get()
+        if imu_packet is None:
+            return
+
+        imu_msg = Imu()
+        imu_msg.header.stamp = self.get_clock().now().to_msg()
+        imu_msg.header.frame_id = frame_id
+
+        accel = imu_packet.acceleroMeter
+        gyro = imu_packet.gyroscope
+
+        # Linear acceleration (in m/s²)
+        imu_msg.linear_acceleration.x = accel.x
+        imu_msg.linear_acceleration.y = accel.y
+        imu_msg.linear_acceleration.z = accel.z
+
+        # Angular velocity (in rad/s)
+        imu_msg.angular_velocity.x = gyro.x
+        imu_msg.angular_velocity.y = gyro.y
+        imu_msg.angular_velocity.z = gyro.z
+
+        # Orientation unknown: disable it
+        imu_msg.orientation_covariance[0] = -1.0
+
+        publisher.publish(imu_msg)
 
 def main(args=None):
     rclpy.init(args=args)
