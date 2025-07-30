@@ -234,7 +234,7 @@ class VIO(Node):
         imu_msg.header.stamp = self.get_clock().now().to_msg()
         imu_msg.header.frame_id = frame_id
         print("hello")
-        accel = imu_packet.acceleroMeter
+        accel = imu_packet.accel
         print("i'm further")
         gyro = imu_packet.gyroscope
 
